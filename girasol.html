@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>// DIANA GOD //</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --neon-yellow: #ffee00;
+      --neon-orange: #ffaa00;
+      --neon-pink: #ff2a6d;
+      --neon-cyan: #05d9e8;
+      --neon-green: #39ff14;
+      --neon-purple: #b967ff;
+      --dark: #07070e;
+      --sky-top: #07070e;
+      --sky-mid: #0a0a18;
+      --sky-bottom: #0d1525;
+    }
+
+    body.day-mode {
+      --sky-top: #1a0a2e;
+      --sky-mid: #2d1b4e;
+      --sky-bottom: #4a1942;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) 100%);
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+      color: #c0c0ff;
+      cursor: auto;
+      transition: background 1.2s ease;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px);
+      pointer-events: none;
+      z-index: 200;
+      opacity: 0.25;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 28%, rgba(0,0,0,0.75) 100%);
+      pointer-events: none;
+      z-index: 199;
+    }
+
+    /* Matrix */
+    .matrix {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      opacity: 0.14;
+    }
+    .matrix-col {
+      position: absolute;
+      top: -120%;
+      font-size: 12px;
+      line-height: 1.25;
+      color: var(--neon-green);
+      text-shadow: 0 0 6px var(--neon-green);
+      writing-mode: vertical-rl;
+      animation: matrixFall linear infinite;
+      white-space: nowrap;
+      letter-spacing: 1px;
+    }
+    @keyframes matrixFall {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(220vh); }
+    }
+
+    .bit {
+      position: absolute;
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 8px var(--neon-cyan);
+      opacity: 0;
+      z-index: 3;
+      pointer-events: none;
+      animation: bitFloat 5.5s ease-in-out forwards;
+    }
+    @keyframes bitFloat {
+      0% { opacity: 0; transform: translateY(15px) scale(0.7); }
+      12% { opacity: 0.7; }
+      80% { opacity: 0.45; }
+      100% { opacity: 0; transform: translateY(-90px) scale(1.1); }
+    }
+
+    /* Grid floor */
+    .grid-floor {
+      position: absolute;
+      bottom: 0; left: -50%;
+      width: 200%; height: 32%;
+      background:
+        linear-gradient(transparent 0%, rgba(5,217,232,0.05) 100%),
+        repeating-linear-gradient(90deg, rgba(5,217,232,0.08) 0, rgba(5,217,232,0.08) 1px, transparent 1px, transparent 48px),
+        repeating-linear-gradient(0deg, rgba(5,217,232,0.08) 0, rgba(5,217,232,0.08) 1px, transparent 1px, transparent 48px);
+      transform: perspective(400px) rotateX(60deg);
+      transform-origin: bottom center;
+      z-index: 1;
+      mask-image: linear-gradient(to top, black 8%, transparent 88%);
+      transition: opacity 1s;
+    }
+    body.day-mode .grid-floor {
+      background:
+        linear-gradient(transparent 0%, rgba(255,100,150,0.06) 100%),
+        repeating-linear-gradient(90deg, rgba(255,120,180,0.1) 0, rgba(255,120,180,0.1) 1px, transparent 1px, transparent 48px),
+        repeating-linear-gradient(0deg, rgba(255,120,180,0.1) 0, rgba(255,120,180,0.1) 1px, transparent 1px, transparent 48px);
+    }
+    .horizon {
+      position: absolute;
+      bottom: 25%; left: 0; right: 0;
+      height: 70px;
+      background: linear-gradient(to top, rgba(5,217,232,0.12), transparent);
+      z-index: 2;
+      transition: background 1s;
+    }
+    body.day-mode .horizon {
+      background: linear-gradient(to top, rgba(255,100,150,0.2), rgba(255,150,80,0.08), transparent);
+    }
+
+    /* Brand */
+    .brand {
+      position: absolute;
+      top: 2.5%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      text-align: center;
+    }
+    .brand-dedication {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #e0e0ff;
+      text-shadow: 0 0 10px rgba(200,200,255,0.4);
+      margin-bottom: 6px;
+    }
+    .brand-dedication .c-fantasma {
+      color: #7fdbff;
+      text-shadow: 0 0 12px #7fdbff, 0 0 24px rgba(127,219,255,0.6);
+    }
+    .brand-dedication .c-fenito {
+      color: #ff6bcb;
+      text-shadow: 0 0 12px #ff6bcb, 0 0 24px rgba(255,107,203,0.6);
+    }
+    .brand-sub {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      color: #c77dff;
+      text-shadow: 
+        0 0 10px #c77dff,
+        0 0 25px #b967ff,
+        0 0 45px rgba(185, 103, 255, 0.7);
+      margin-top: 6px;
+      opacity: 1;
+      animation: dianaGlow 2.8s ease-in-out infinite;
+      display: inline-block;
+      position: relative;
+    }
+    @keyframes dianaGlow {
+      0%, 100% {
+        text-shadow: 0 0 10px #c77dff, 0 0 25px #b967ff, 0 0 45px rgba(185,103,255,0.7);
+        transform: scale(1);
+      }
+      50% {
+        text-shadow: 0 0 16px #d4a5ff, 0 0 35px #c77dff, 0 0 60px rgba(185,103,255,0.9);
+        transform: scale(1.04);
+      }
+    }
+    /* Glitch effect */
+    .brand-sub.glitching {
+      animation: none;
+    }
+    .brand-sub.glitching::before,
+    .brand-sub.glitching::after {
+      content: '// DIANA GOD //';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      overflow: hidden;
+    }
+    .brand-sub.glitching::before {
+      color: #05d9e8;
+      z-index: -1;
+      animation: glitchTop 0.35s steps(2) forwards;
+    }
+    .brand-sub.glitching::after {
+      color: #ff2a6d;
+      z-index: -2;
+      animation: glitchBottom 0.35s steps(2) forwards;
+    }
+    @keyframes glitchTop {
+      0% { clip-path: inset(0 0 80% 0); transform: translate(-3px, -1px); }
+      20% { clip-path: inset(20% 0 40% 0); transform: translate(3px, 1px); }
+      40% { clip-path: inset(40% 0 30% 0); transform: translate(-2px, 0); }
+      60% { clip-path: inset(60% 0 10% 0); transform: translate(2px, 1px); }
+      80% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, -1px); }
+      100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+    }
+    @keyframes glitchBottom {
+      0% { clip-path: inset(80% 0 0 0); transform: translate(3px, 1px); }
+      20% { clip-path: inset(50% 0 20% 0); transform: translate(-3px, -1px); }
+      40% { clip-path: inset(30% 0 40% 0); transform: translate(2px, 0); }
+      60% { clip-path: inset(10% 0 60% 0); transform: translate(-2px, 1px); }
+      80% { clip-path: inset(70% 0 5% 0); transform: translate(1px, -1px); }
+      100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+    }
+
+    /* Terminal */
+    .terminal {
+      position: absolute;
+      top: 12%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(420px, 92vw);
+      background: rgba(0, 12, 22, 0.9);
+      border: 1px solid rgba(5, 217, 232, 0.45);
+      border-radius: 3px;
+      padding: 10px 14px;
+      font-size: 0.68rem;
+      color: var(--neon-green);
+      text-shadow: 0 0 7px var(--neon-green);
+      z-index: 25;
+      box-shadow: 0 0 18px rgba(5, 217, 232, 0.2), inset 0 0 22px rgba(0,0,0,0.5);
+      opacity: 0;
+      transition: opacity 0.35s;
+      pointer-events: none;
+    }
+    .terminal.show { opacity: 1; }
+    .terminal .prompt { color: var(--neon-cyan); }
+
+    /* Day/Night toggle */
+    .mode-toggle {
+      position: absolute;
+      top: 3%;
+      right: 3%;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: auto;
+    }
+    .mode-toggle label {
+      font-size: 0.6rem;
+      color: rgba(200,200,255,0.6);
+      letter-spacing: 0.1em;
+    }
+    .toggle-btn {
+      width: 44px;
+      height: 22px;
+      background: rgba(5,217,232,0.15);
+      border: 1px solid rgba(5,217,232,0.4);
+      border-radius: 12px;
+      position: relative;
+      cursor: auto;
+      transition: background 0.3s;
+    }
+    .toggle-btn::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 16px; height: 16px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--neon-cyan);
+      transition: transform 0.3s, background 0.3s;
+    }
+    body.day-mode .toggle-btn {
+      background: rgba(255,100,150,0.2);
+      border-color: rgba(255,120,180,0.5);
+    }
+    body.day-mode .toggle-btn::after {
+      transform: translateX(22px);
+      background: #ff6bcb;
+      box-shadow: 0 0 8px #ff6bcb;
+    }
+
+    /* Water */
+    .water-system {
+      position: absolute;
+      top: 19%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      opacity: 0;
+      transition: opacity 0.5s;
+      pointer-events: none;
+      text-align: center;
+    }
+    .water-system.active { opacity: 1; }
+    .water-drop {
+      display: inline-block;
+      width: 10px; height: 14px;
+      background: linear-gradient(180deg, #7fdbff, #05d9e8);
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      margin: 0 3px;
+      box-shadow: 0 0 8px #05d9e8;
+      animation: dropFall 1.2s ease-in infinite;
+    }
+    .water-drop:nth-child(2) { animation-delay: 0.2s; }
+    .water-drop:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dropFall {
+      0% { transform: translateY(-10px); opacity: 0; }
+      30% { opacity: 1; }
+      100% { transform: translateY(40px); opacity: 0; }
+    }
+    .water-label {
+      font-size: 0.58rem;
+      color: var(--neon-cyan);
+      letter-spacing: 0.12em;
+      margin-top: 5px;
+      text-shadow: 0 0 6px var(--neon-cyan);
+    }
+
+    /* Floating code comments */
+    .code-comment {
+      position: absolute;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(160, 255, 160, 0.9);
+      text-shadow: 0 0 8px rgba(57, 255, 20, 0.55), 0 0 16px rgba(57, 255, 20, 0.25);
+      z-index: 8;
+      pointer-events: none;
+      opacity: 0;
+      animation: commentFade 9s ease-in-out forwards;
+      white-space: nowrap;
+      letter-spacing: 0.03em;
+    }
+    @keyframes commentFade {
+      0% { opacity: 0; transform: translateY(8px); }
+      15% { opacity: 0.8; }
+      75% { opacity: 0.6; }
+      100% { opacity: 0; transform: translateY(-12px); }
+    }
+
+    /* Flower stage */
+    .flower-stage {
+      position: relative;
+      width: 340px;
+      height: 410px;
+      z-index: 10;
+      margin-bottom: 8%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .sunflower {
+      width: 300px;
+      height: 400px;
+      overflow: visible;
+      cursor: auto;
+      transform-origin: 50% 93%;
+      filter: drop-shadow(0 0 12px rgba(255, 238, 0, 0.4));
+      animation: softSway 5.5s ease-in-out infinite;
+    }
+    @keyframes softSway {
+      0%, 100% { transform: rotate(-3.5deg); }
+      50% { transform: rotate(3.5deg); }
+    }
+
+    .seed { opacity: 0; transform-origin: center; transition: opacity 0.5s ease, transform 0.5s ease; }
+    .seed.visible { opacity: 1; }
+    .seed.absorb { opacity: 0; transform: scale(0.1); transition: all 0.35s ease; }
+
+    .stem {
+      stroke-dasharray: 250;
+      stroke-dashoffset: 250;
+      transition: stroke-dashoffset 2.2s cubic-bezier(0.22, 1, 0.36, 1);
+      filter: drop-shadow(0 0 6px var(--neon-green));
+    }
+    .stem.grown { stroke-dashoffset: 0; }
+
+    .stem-glow {
+      stroke-dasharray: 250;
+      stroke-dashoffset: 250;
+      opacity: 0;
+      transition: stroke-dashoffset 2.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s;
+    }
+    .stem-glow.grown {
+      stroke-dashoffset: 0;
+      opacity: 0.5;
+      animation: pulseStem 1.6s ease-in-out infinite;
+    }
+    @keyframes pulseStem {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.7; }
+    }
+
+    .leaf {
+      opacity: 0;
+      transform-origin: 0% 50%;
+      transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.34, 1.5, 0.64, 1);
+      filter: drop-shadow(0 0 8px var(--neon-green));
+    }
+    .leaf.visible { opacity: 1; }
+
+    .center {
+      opacity: 0;
+      transform-origin: center;
+      transform: scale(0);
+      transition: opacity 0.4s ease, transform 0.55s cubic-bezier(0.34, 1.7, 0.64, 1);
+    }
+    .center.visible { opacity: 1; transform: scale(1); }
+    .center-core {
+      filter: drop-shadow(0 0 16px var(--neon-orange)) drop-shadow(0 0 30px rgba(255,170,0,0.5));
+    }
+
+    .petal {
+      opacity: 0;
+      transition: opacity 0.45s ease;
+      filter: drop-shadow(0 0 8px rgba(255,238,0,0.8));
+    }
+    .petal.hidden { opacity: 0; }
+    .petal.visible { opacity: 1; }
+    .petal.released { opacity: 0; transition: opacity 0.55s ease; }
+
+    /* Message — luz neón BLANCA para resaltar sobre el girasol */
+    .message {
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      text-align: center;
+      font-size: 0.88rem;
+      color: #ffffff;
+      font-weight: 700;
+      /* Luz neón blanca multicapa: halo brillante alrededor del texto */
+      text-shadow:
+        0 0 4px #ffffff,
+        0 0 8px #ffffff,
+        0 0 14px #ffffff,
+        0 0 22px rgba(255,255,255,0.9),
+        0 0 36px rgba(255,255,255,0.7),
+        0 0 52px rgba(255,255,255,0.45),
+        0 2px 4px rgba(0,0,0,0.9);
+      /* Bloom extra blanco */
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.8))
+              drop-shadow(0 0 16px rgba(255,255,255,0.5));
+      opacity: 0;
+      transition: opacity 1s ease, transform 1s ease;
+      z-index: 30;
+      pointer-events: none;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+    .message.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .heart {
+      display: inline-block;
+      width: 12px; height: 12px;
+      position: relative;
+      top: 1px;
+      margin-left: 5px;
+    }
+    .heart::before, .heart::after {
+      content: '';
+      position: absolute;
+      width: 7px; height: 10px;
+      background: var(--neon-pink);
+      border-radius: 7px 7px 0 0;
+      box-shadow: 0 0 10px var(--neon-pink);
+    }
+    .heart::before {
+      left: 6px;
+      transform: rotate(-45deg);
+      transform-origin: 0 100%;
+    }
+    .heart::after {
+      left: 0;
+      transform: rotate(45deg);
+      transform-origin: 100% 100%;
+    }
+
+    /* Button */
+    .controls {
+      position: absolute;
+      bottom: 2.5%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 40;
+    }
+    .grow-btn, .index-btn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      background: linear-gradient(135deg, #0a0a18, #0d1520);
+      border: 2px solid var(--neon-cyan);
+      border-radius: 2px;
+      color: var(--neon-cyan);
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: auto;
+      box-shadow: 0 0 16px rgba(5,217,232,0.4), inset 0 0 12px rgba(5,217,232,0.08);
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .grow-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -130%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(5,217,232,0.3), transparent);
+      transition: left 0.5s ease;
+    }
+    .grow-btn:hover {
+      background: linear-gradient(135deg, #0d1520, #122030);
+      box-shadow: 0 0 24px rgba(5,217,232,0.7);
+      transform: translateY(-2px);
+    }
+    .grow-btn:hover::before { left: 130%; }
+    .grow-btn:disabled {
+      opacity: 0.45;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-icon {
+      width: 16px; height: 16px;
+      position: relative;
+    }
+    .btn-icon .p-stem {
+      position: absolute; bottom: 0; left: 7px;
+      width: 2px; height: 8px;
+      background: var(--neon-green);
+      box-shadow: 0 0 4px var(--neon-green);
+    }
+    .btn-icon .p-leaf {
+      position: absolute; width: 5px; height: 3px;
+      background: var(--neon-green);
+      box-shadow: 0 0 3px var(--neon-green);
+    }
+    .btn-icon .p-leaf.l { bottom: 5px; left: 2px; }
+    .btn-icon .p-leaf.r { bottom: 5px; right: 2px; }
+    .btn-icon .p-head {
+      position: absolute; top: 0; left: 3.5px;
+      width: 8px; height: 8px;
+      background: var(--neon-yellow);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--neon-yellow);
+    }
+
+    /* Flying petals */
+    .flying-petal {
+      position: absolute;
+      width: 13px; height: 22px;
+      background: linear-gradient(160deg, #ffff44, #ffaa00);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      pointer-events: none;
+      z-index: 50;
+      box-shadow: 0 0 12px var(--neon-yellow);
+      animation: flyPetal 1.5s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+    }
+    @keyframes flyPetal {
+      0% { opacity: 1; transform: translate(0,0) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.3); }
+    }
+
+    /* Shooting stars from petals */
+    .shooting-star {
+      position: absolute;
+      width: 3px; height: 3px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #fff, 0 0 12px var(--neon-cyan), 0 0 18px var(--neon-purple);
+      pointer-events: none;
+      z-index: 55;
+      animation: shootStar 1.8s ease-out forwards;
+    }
+    .shooting-star::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 30px; height: 1px;
+      background: linear-gradient(to left, rgba(255,255,255,0.8), transparent);
+      transform-origin: right center;
+    }
+    @keyframes shootStar {
+      0% { opacity: 1; transform: translate(0,0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(0.3); }
+    }
+
+    /* Background mini sunflowers */
+    .bg-sunflower {
+      position: absolute;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      filter: drop-shadow(0 0 8px rgba(255,238,0,0.45));
+      animation: bgAppear 0.7s cubic-bezier(0.34, 1.5, 0.64, 1) forwards;
+    }
+    @keyframes bgAppear {
+      from { opacity: 0; transform: scale(0) translateY(20px); }
+      to { opacity: 0.8; transform: scale(1) translateY(0); }
+    }
+    .bg-sunflower.sway {
+      animation: bgAppear 0.7s cubic-bezier(0.34, 1.5, 0.64, 1) forwards,
+                 bgSway 4s ease-in-out 0.7s infinite;
+    }
+    @keyframes bgSway {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+
+    /* Constellation */
+    .constellation {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+    .const-star {
+      position: absolute;
+      width: 3px; height: 3px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #fff, 0 0 12px var(--neon-purple);
+      opacity: 0;
+      animation: constAppear 1.2s ease forwards;
+    }
+    @keyframes constAppear {
+      from { opacity: 0; transform: scale(0); }
+      to { opacity: 0.9; transform: scale(1); }
+    }
+    .const-line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(199,125,255,0.4), transparent);
+      transform-origin: left center;
+      opacity: 0;
+      animation: constLine 1s ease forwards;
+    }
+    @keyframes constLine {
+      from { opacity: 0; }
+      to { opacity: 0.6; }
+    }
+
+    .energy-dot {
+      position: absolute;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 12;
+      animation: energyRise 1.1s ease-out forwards;
+    }
+    @keyframes energyRise {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-90px) scale(0.15); }
+    }
+
+    .signature {
+      position: absolute;
+      bottom: 0.7%;
+      right: 1.5%;
+      font-size: 0.5rem;
+      color: rgba(5, 217, 232, 0.3);
+      letter-spacing: 0.15em;
+      z-index: 30;
+    }
+
+    .cycle-counter {
+      position: absolute;
+      bottom: 0.7%;
+      left: 1.5%;
+      font-size: 0.55rem;
+      color: rgba(5, 217, 232, 0.4);
+      letter-spacing: 0.1em;
+      z-index: 30;
+    }
+
+    /* ========== MOBILE OPTIMIZATIONS ========== */
+    @media (max-width: 600px) {
+      body {
+        cursor: auto !important;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        padding-bottom: env(safe-area-inset-bottom);
+        justify-content: flex-end;
+      }
+      
+      .brand {
+        top: 2.8%;
+        width: 90%;
+      }
+      .brand-dedication {
+        font-size: 0.72rem;
+        letter-spacing: 0.05em;
+        margin-bottom: 3px;
+      }
+      .brand-sub {
+        font-size: 0.92rem;
+        letter-spacing: 0.14em;
+      }
+      
+      .mode-toggle {
+        top: 2%;
+        right: 2%;
+        transform: scale(0.82);
+      }
+      
+      .terminal {
+        top: 9.5%;
+        width: 90vw;
+        font-size: 0.58rem;
+        padding: 7px 10px;
+      }
+      
+      /* === GIRASOL MÁS GRANDE === */
+      .flower-stage {
+        width: 300px;
+        height: 380px;
+        margin-bottom: 0;
+        position: relative;
+        z-index: 10;
+        margin-top: -10px;
+      }
+      .sunflower {
+        width: 290px;
+        height: 380px;
+        animation: softSway 6.5s ease-in-out infinite;
+      }
+      @keyframes softSway {
+        0%, 100% { transform: rotate(-2.5deg); }
+        50% { transform: rotate(2.5deg); }
+      }
+      
+      /* === MENSAJE CON LUZ NEÓN BLANCA === */
+      .message {
+        bottom: 26%;
+        font-size: 0.72rem;
+        white-space: normal;
+        max-width: 88vw;
+        padding: 0 12px;
+        line-height: 1.5;
+        z-index: 35;
+        color: #ffffff;
+        font-weight: 700;
+        text-shadow:
+          0 0 3px #ffffff,
+          0 0 6px #ffffff,
+          0 0 12px #ffffff,
+          0 0 20px rgba(255,255,255,0.9),
+          0 0 32px rgba(255,255,255,0.65),
+          0 0 48px rgba(255,255,255,0.4),
+          0 2px 4px rgba(0,0,0,0.95);
+        filter: drop-shadow(0 0 5px rgba(255,255,255,0.8))
+                drop-shadow(0 0 14px rgba(255,255,255,0.5));
+      }
+      
+      .controls {
+        position: fixed;
+        bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+        width: 88%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        z-index: 40;
+      }
+      
+      .grow-btn, .index-btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+        padding: 12px 14px;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+      }
+      
+      .grid-floor {
+        height: 22%;
+      }
+      .horizon {
+        bottom: 20%;
+        height: 50px;
+      }
+      
+      .cycle-counter, .signature {
+        display: none;
+      }
+    }
+
+    /* Index button (neon style matching the page) */
+    .index-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      background: linear-gradient(135deg, #120a18, #1a0a2e);
+      border: 2px solid var(--neon-pink);
+      border-radius: 2px;
+      color: var(--neon-pink);
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      box-shadow: 0 0 16px rgba(255, 42, 109, 0.35), inset 0 0 12px rgba(255, 42, 109, 0.08);
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .index-btn:hover, .index-btn:active {
+      background: linear-gradient(135deg, #1a0a2e, #2d1b4e);
+      box-shadow: 0 0 24px rgba(255, 42, 109, 0.6);
+      transform: translateY(-2px);
+    }
+    .index-btn span.icon {
+      font-size: 1rem;
+    }
+
+    /* Intro message */
+    .intro-overlay {
+      position: fixed;
+      inset: 0;
+      background: #07070e;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: opacity 1.1s ease, visibility 1.1s;
+    }
+    .intro-overlay.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .intro-text {
+      font-family: 'Courier New', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: #e0e0ff;
+      text-align: center;
+      text-shadow: 0 0 18px rgba(200, 180, 255, 0.6), 0 0 40px rgba(185, 103, 255, 0.35);
+      opacity: 0;
+      transform: translateY(12px);
+      animation: introIn 1.2s ease 0.3s forwards;
+      padding: 0 24px;
+      line-height: 1.6;
+    }
+    .intro-text span {
+      display: block;
+      color: #ff6bcb;
+      text-shadow: 0 0 14px #ff6bcb, 0 0 28px rgba(255, 107, 203, 0.5);
+      margin-top: 10px;
+      font-size: 1.05rem;
+      letter-spacing: 0.18em;
+    }
+    @keyframes introIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 600px) {
+      .intro-text { font-size: 0.95rem; letter-spacing: 0.14em; }
+      .intro-text span { font-size: 0.9rem; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="intro-overlay" id="introOverlay">
+    <div class="intro-text">
+      PARA QUE NO LA OLVIDES
+      <span>// diana.sys</span>
+    </div>
+  </div>
+
+  <div class="matrix" id="matrix"></div>
+  <div class="grid-floor"></div>
+  <div class="horizon"></div>
+  <div class="constellation" id="constellation"></div>
+
+  <div class="brand">
+    <div class="brand-dedication">
+      DE <span class="c-fantasma">FANTASMITA</span> Y <span class="c-fenito">FEÑITO</span> PARA
+    </div>
+    <div class="brand-sub" id="dianaTitle">// DIANA GOD //</div>
+  </div>
+
+  <div class="mode-toggle">
+    <label>NOCHE</label>
+    <div class="toggle-btn" id="modeToggle"></div>
+    <label>DÍA</label>
+  </div>
+
+  <div class="terminal" id="terminal">
+    <div class="line"><span class="prompt">root@diana:~$</span> <span id="termText">sistema listo...</span></div>
+  </div>
+
+  <div class="water-system" id="waterSystem">
+    <div class="water-drop"></div>
+    <div class="water-drop"></div>
+    <div class="water-drop"></div>
+    <div class="water-label">PROTOCOLO DE RIEGO</div>
+  </div>
+
+  <div class="flower-stage" id="stage">
+    <svg class="sunflower" id="sunflower" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+      <ellipse class="seed" cx="150" cy="372" rx="9" ry="12" fill="#8b5a2b"/>
+      <ellipse class="seed" cx="150" cy="372" rx="5" ry="7" fill="#5c3a1a"/>
+      <path class="stem-glow" d="M150 372 Q146 290 150 168" fill="none" stroke="#39ff14" stroke-width="11" stroke-linecap="round"/>
+      <path class="stem" d="M150 372 Q146 290 150 168" fill="none" stroke="#2ecc71" stroke-width="7" stroke-linecap="round"/>
+      <g class="leaf" transform="translate(150, 290)">
+        <path d="M0 0 Q-42 -32 -68 -10 Q-48 20 -9 11 Z" fill="#27ae60"/>
+        <path d="M0 0 Q-36 -14 -50 3" fill="none" stroke="#1e8449" stroke-width="1.5"/>
+      </g>
+      <g class="leaf" transform="translate(150, 252)">
+        <path d="M0 0 Q44 -30 65 7 Q40 22 7 11 Z" fill="#27ae60"/>
+        <path d="M0 0 Q34 -12 48 5" fill="none" stroke="#1e8449" stroke-width="1.5"/>
+      </g>
+      <g class="head" transform="translate(150, 148)">
+        <g class="petals"></g>
+        <circle class="center" cx="0" cy="0" r="38" fill="none" stroke="#ffaa00" stroke-width="2.5" opacity="0.4"/>
+        <circle class="center center-core" cx="0" cy="0" r="31" fill="#2a1505"/>
+        <circle class="center" cx="0" cy="0" r="26" fill="#4a2510"/>
+        <g class="center-seeds center"></g>
+      </g>
+      <defs>
+        <radialGradient id="petalGrad" cx="50%" cy="25%" r="75%">
+          <stop offset="0%" stop-color="#ffff66"/>
+          <stop offset="50%" stop-color="#ffee00"/>
+          <stop offset="100%" stop-color="#ff9900"/>
+        </radialGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="message" id="message">
+    Que nunca te falten motivos para sonreír <span class="heart"></span>
+  </div>
+
+  <div class="controls">
+    <button class="grow-btn" id="growBtn" disabled>
+      <span class="btn-icon">
+        <span class="p-stem"></span>
+        <span class="p-leaf l"></span>
+        <span class="p-leaf r"></span>
+        <span class="p-head"></span>
+      </span>
+      ESPERANDO...
+    </button>
+    <a class="index-btn" href="index.html#carta">
+      <span class="icon">💌</span>
+      ABRIR CARTA
+    </a>
+  </div>
+
+  <div class="cycle-counter" id="cycleCounter">ciclos: 0</div>
+  <div class="signature">DIANA.SYS</div>
+
+  <script>
+    (function () {
+      const DEDICATED_BITS = [
+        '01000100','01001001','01000001','01001110','01000001',
+        '0','1','01','10','00','11'
+      ];
+
+      const CODE_COMMENTS = [
+        '// TODO: no dejar de sonreír',
+        '// fix: tristeza = null',
+        '// const amor = true;',
+        '// while(diana) { brillar(); }',
+        '// return "siempre";',
+        '// heart++;',
+        '// bug: demasiada belleza',
+        '// optimizado para ella',
+        '// if (teVeo) sonreír();',
+        '// memoria: momentos felices'
+      ];
+
+      const RANDOM_MSGS = [
+        'diana.exe se está ejecutando con éxito',
+        'error: no se encontró motivo para no sonreír',
+        'ping a tu corazón... 12ms',
+        'cargando felicidad... 100%',
+        'diana.sys: estado = radiante',
+        'compilando sonrisas...',
+        'backup de recuerdos: OK',
+        'detectado: nivel de luz máximo',
+        'proceso "quererte" en ejecución',
+        'alerta: exceso de ternura'
+      ];
+
+      const svg = document.getElementById('sunflower');
+      const petalsGroup = document.querySelector('.petals');
+      const centerSeeds = document.querySelector('.center-seeds');
+      const seedEls = document.querySelectorAll('.seed');
+      const stem = document.querySelector('.stem');
+      const stemGlow = document.querySelector('.stem-glow');
+      const leaves = document.querySelectorAll('.leaf');
+      const centers = document.querySelectorAll('.center');
+      const message = document.getElementById('message');
+      const growBtn = document.getElementById('growBtn');
+      const terminal = document.getElementById('terminal');
+      const termText = document.getElementById('termText');
+      const stage = document.getElementById('stage');
+      const matrix = document.getElementById('matrix');
+      const waterSystem = document.getElementById('waterSystem');
+      const dianaTitle = document.getElementById('dianaTitle');
+      const modeToggle = document.getElementById('modeToggle');
+      const constellation = document.getElementById('constellation');
+      const cycleCounter = document.getElementById('cycleCounter');
+
+      const PETAL_COUNT = 18;
+      let isGrowing = false;
+      let isComplete = false;
+      let canTrack = false;
+      let petalsReleased = false;
+      let timeouts = [];
+      let currentAngle = 0;
+      let cycles = 0;
+      let constellationDone = false;
+
+      // Day/Night toggle
+      modeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('day-mode');
+      });
+
+      // Glitch on title every few seconds
+      function triggerGlitch() {
+        dianaTitle.classList.add('glitching');
+        setTimeout(() => dianaTitle.classList.remove('glitching'), 400);
+      }
+      setInterval(triggerGlitch, 5000 + Math.random() * 4000);
+
+      // Floating code comments
+      function spawnComment() {
+        if (!isComplete) return;
+        const c = document.createElement('div');
+        c.className = 'code-comment';
+        c.textContent = CODE_COMMENTS[Math.floor(Math.random() * CODE_COMMENTS.length)];
+        c.style.left = (15 + Math.random() * 70) + '%';
+        c.style.top = (30 + Math.random() * 40) + '%';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 8500);
+      }
+      setInterval(spawnComment, 4500);
+
+      // Random terminal personality messages
+      function randomTermMsg() {
+        if (isGrowing || !isComplete) return;
+        const msg = RANDOM_MSGS[Math.floor(Math.random() * RANDOM_MSGS.length)];
+        setTerm(msg);
+        setTimeout(hideTerm, 2800);
+      }
+      setInterval(randomTermMsg, 9000);
+
+      function createMatrix() {
+        const cols = Math.floor(window.innerWidth / 20);
+        for (let i = 0; i < cols; i++) {
+          const col = document.createElement('div');
+          col.className = 'matrix-col';
+          col.style.left = (i * 20 + Math.random() * 8) + 'px';
+          col.style.animationDuration = (9 + Math.random() * 13) + 's';
+          col.style.animationDelay = (Math.random() * 9) + 's';
+          let text = '';
+          for (let j = 0; j < 26; j++) {
+            text += DEDICATED_BITS[Math.floor(Math.random() * DEDICATED_BITS.length)] + ' ';
+          }
+          col.textContent = text;
+          matrix.appendChild(col);
+        }
+      }
+
+      function spawnBit() {
+        const bit = document.createElement('div');
+        bit.className = 'bit';
+        bit.textContent = DEDICATED_BITS[Math.floor(Math.random() * DEDICATED_BITS.length)];
+        bit.style.left = (8 + Math.random() * 84) + '%';
+        bit.style.top = (35 + Math.random() * 45) + '%';
+        bit.style.color = Math.random() > 0.45 ? 'var(--neon-cyan)' : 'var(--neon-green)';
+        document.body.appendChild(bit);
+        setTimeout(() => bit.remove(), 6500);
+      }
+
+      function createPetals() {
+        petalsGroup.innerHTML = '';
+        for (let i = 0; i < PETAL_COUNT; i++) {
+          const angle = (i * 360 / PETAL_COUNT) - 90;
+          const sizeVar = 0.80 + Math.random() * 0.30;
+          const rotVar = (Math.random() - 0.5) * 10;
+          const length = 57 * sizeVar;
+          const width = 15.5 * sizeVar;
+          const petal = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+          petal.setAttribute('class', 'petal hidden');
+          petal.setAttribute('cx', '0');
+          petal.setAttribute('cy', -28 - length / 2);
+          petal.setAttribute('rx', width / 2);
+          petal.setAttribute('ry', length / 2);
+          petal.setAttribute('fill', 'url(#petalGrad)');
+          petal.setAttribute('transform', `rotate(${angle + rotVar})`);
+          petalsGroup.appendChild(petal);
+        }
+      }
+
+      function createCenterSeeds() {
+        centerSeeds.innerHTML = '';
+        const golden = 2.399963229728653;
+        for (let i = 0; i < 56; i++) {
+          const r = 2.1 + Math.sqrt(i) * 2.75;
+          const a = i * golden;
+          const x = Math.cos(a) * r;
+          const y = Math.sin(a) * r;
+          if (Math.hypot(x, y) > 23) continue;
+          const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          dot.setAttribute('cx', x);
+          dot.setAttribute('cy', y);
+          dot.setAttribute('r', 1.25 + (i % 4) * 0.25);
+          const colors = ['#1a0c03', '#2c1808', '#3d2210', '#4f2c14'];
+          dot.setAttribute('fill', colors[i % 4]);
+          centerSeeds.appendChild(dot);
+        }
+      }
+
+      function clearTimeouts() {
+        timeouts.forEach(clearTimeout);
+        timeouts = [];
+      }
+
+      function setTerm(text) {
+        termText.textContent = text;
+        terminal.classList.add('show');
+      }
+      function hideTerm() {
+        terminal.classList.remove('show');
+      }
+
+      function spawnEnergy() {
+        const rect = svg.getBoundingClientRect();
+        const baseX = rect.width / 2;
+        for (let i = 0; i < 6; i++) {
+          const d = document.createElement('div');
+          d.className = 'energy-dot';
+          d.style.left = (baseX + (Math.random() - 0.5) * 28) + 'px';
+          d.style.top = (rect.height * (0.65 + Math.random() * 0.22)) + 'px';
+          d.style.background = Math.random() > 0.4 ? 'var(--neon-cyan)' : 'var(--neon-green)';
+          d.style.boxShadow = `0 0 8px ${d.style.background}`;
+          stage.appendChild(d);
+          setTimeout(() => d.remove(), 1200);
+        }
+      }
+
+      // Heart constellation points (normalized 0-1)
+      const HEART_POINTS = [
+        [0.5, 0.25], [0.38, 0.18], [0.28, 0.22], [0.22, 0.32],
+        [0.22, 0.42], [0.30, 0.55], [0.40, 0.68], [0.50, 0.80],
+        [0.60, 0.68], [0.70, 0.55], [0.78, 0.42], [0.78, 0.32],
+        [0.72, 0.22], [0.62, 0.18], [0.50, 0.25]
+      ];
+
+      function createConstellation() {
+        if (constellationDone) return;
+        constellationDone = true;
+        constellation.innerHTML = '';
+
+        const w = window.innerWidth;
+        const h = window.innerHeight * 0.45;
+        const offsetX = w * 0.15;
+        const offsetY = h * 0.15;
+        const scaleX = w * 0.7;
+        const scaleY = h * 0.7;
+
+        const positions = HEART_POINTS.map(([nx, ny], i) => {
+          const x = offsetX + nx * scaleX;
+          const y = offsetY + ny * scaleY;
+          const star = document.createElement('div');
+          star.className = 'const-star';
+          star.style.left = x + 'px';
+          star.style.top = y + 'px';
+          star.style.animationDelay = (i * 0.12) + 's';
+          constellation.appendChild(star);
+          return { x, y };
+        });
+
+        // Draw lines between consecutive points
+        for (let i = 0; i < positions.length - 1; i++) {
+          const a = positions[i];
+          const b = positions[i + 1];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const len = Math.hypot(dx, dy);
+          const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+          const line = document.createElement('div');
+          line.className = 'const-line';
+          line.style.left = a.x + 'px';
+          line.style.top = a.y + 'px';
+          line.style.width = len + 'px';
+          line.style.transform = `rotate(${angle}deg)`;
+          line.style.animationDelay = (0.8 + i * 0.08) + 's';
+          constellation.appendChild(line);
+        }
+      }
+
+      function spawnBgSunflower() {
+        const size = 36 + Math.random() * 30;
+        const svgMini = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svgMini.setAttribute('class', 'bg-sunflower sway');
+        svgMini.setAttribute('viewBox', '-22 -30 44 60');
+        svgMini.style.width = size + 'px';
+        svgMini.style.height = (size * 1.35) + 'px';
+        svgMini.style.left = (5 + Math.random() * 90) + '%';
+        svgMini.style.bottom = (12 + Math.random() * 26) + '%';
+        svgMini.style.transformOrigin = '50% 90%';
+
+        const st = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        st.setAttribute('x1', '0'); st.setAttribute('y1', '22');
+        st.setAttribute('x2', '0'); st.setAttribute('y2', '-2');
+        st.setAttribute('stroke', '#2ecc71'); st.setAttribute('stroke-width', '2.5');
+        st.setAttribute('stroke-linecap', 'round');
+        svgMini.appendChild(st);
+
+        for (let i = 0; i < 12; i++) {
+          const el = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+          el.setAttribute('cx', '0'); el.setAttribute('cy', '-11');
+          el.setAttribute('rx', '3.6'); el.setAttribute('ry', '8.5');
+          el.setAttribute('fill', '#ffee00');
+          el.setAttribute('transform', `rotate(${i * 30})`);
+          svgMini.appendChild(el);
+        }
+        const core = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        core.setAttribute('r', '4.5'); core.setAttribute('fill', '#4a2510');
+        svgMini.appendChild(core);
+
+        document.body.appendChild(svgMini);
+        setTimeout(() => {
+          svgMini.style.transition = 'opacity 1.5s';
+          svgMini.style.opacity = '0';
+          setTimeout(() => svgMini.remove(), 1600);
+        }, 9000 + Math.random() * 4000);
+      }
+
+      function releasePetalsAndSpawn() {
+        if (!isComplete || petalsReleased) return;
+        petalsReleased = true;
+        growBtn.disabled = true;
+        cycles++;
+        cycleCounter.textContent = 'ciclos: ' + cycles;
+        setTerm('extrayendo pétalos del núcleo...');
+
+        const petals = petalsGroup.querySelectorAll('.petal');
+        const rect = svg.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height * 0.34;
+
+        petals.forEach((petal, i) => {
+          setTimeout(() => {
+            petal.classList.add('released');
+            petal.classList.remove('visible');
+
+            // Flying petal
+            const fly = document.createElement('div');
+            fly.className = 'flying-petal';
+            const angle = (Math.random() - 0.5) * Math.PI * 1.8;
+            const dist = 70 + Math.random() * 160;
+            fly.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+            fly.style.setProperty('--ty', `${-Math.abs(Math.sin(angle)) * dist - 20}px`);
+            fly.style.setProperty('--rot', `${(Math.random() - 0.5) * 300}deg`);
+            fly.style.left = `${cx + (Math.random() - 0.5) * 16}px`;
+            fly.style.top = `${cy + (Math.random() - 0.5) * 12}px`;
+            document.body.appendChild(fly);
+            setTimeout(() => fly.remove(), 1600);
+
+            // Some become shooting stars
+            if (Math.random() > 0.45) {
+              setTimeout(() => {
+                const star = document.createElement('div');
+                star.className = 'shooting-star';
+                star.style.left = (cx + (Math.random() - 0.5) * 60) + 'px';
+                star.style.top = (cy - 20 + Math.random() * 30) + 'px';
+                const sx = (Math.random() - 0.5) * 200;
+                const sy = -80 - Math.random() * 160;
+                star.style.setProperty('--sx', sx + 'px');
+                star.style.setProperty('--sy', sy + 'px');
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 1900);
+              }, 200);
+            }
+          }, i * 50);
+        });
+
+        setTimeout(() => {
+          setTerm('dispersando semillas // nuevos brotes naciendo...');
+          const count = 5 + Math.floor(Math.random() * 4);
+          for (let i = 0; i < count; i++) {
+            setTimeout(() => spawnBgSunflower(), i * 160);
+          }
+        }, 800);
+
+        // Constellation on first release
+        if (cycles === 1) {
+          setTimeout(() => createConstellation(), 1200);
+        }
+
+        setTimeout(() => {
+          setTerm('liberación completa // núcleo regenerándose...');
+          setTimeout(() => {
+            createPetals();
+            const newPetals = petalsGroup.querySelectorAll('.petal');
+            newPetals.forEach((p, i) => {
+              setTimeout(() => {
+                p.classList.remove('hidden');
+                p.classList.add('visible');
+              }, i * 70);
+            });
+            petalsReleased = false;
+            growBtn.disabled = false;
+            growBtn.innerHTML = `
+              <span class="btn-icon">
+                <span class="p-stem"></span>
+                <span class="p-leaf l"></span>
+                <span class="p-leaf r"></span>
+                <span class="p-head"></span>
+              </span>
+              LIBERAR PÉTALOS
+            `;
+            setTerm('listo para el siguiente ciclo');
+            setTimeout(hideTerm, 2200);
+          }, 1500);
+        }, 2600);
+      }
+
+      function growFlower() {
+        if (isGrowing) return;
+        isGrowing = true;
+        growBtn.disabled = true;
+
+        setTerm('protocolo de riego iniciado...');
+        waterSystem.classList.add('active');
+
+        timeouts.push(setTimeout(() => {
+          seedEls.forEach(s => s.classList.add('visible'));
+          setTerm('semilla hidratada // germinación iniciada...');
+        }, 1100));
+
+        timeouts.push(setTimeout(() => {
+          waterSystem.classList.remove('active');
+          seedEls.forEach(s => s.classList.add('absorb'));
+          stem.classList.add('grown');
+          stemGlow.classList.add('grown');
+          setTerm('tallo expandiéndose // absorción de agua: OK');
+          spawnEnergy();
+        }, 2300));
+
+        timeouts.push(setTimeout(() => {
+          leaves[0].classList.add('visible');
+          setTerm('hoja[0] desplegada');
+        }, 4100));
+        timeouts.push(setTimeout(() => {
+          leaves[1].classList.add('visible');
+          setTerm('hoja[1] desplegada');
+        }, 4600));
+
+        timeouts.push(setTimeout(() => {
+          centers.forEach(c => c.classList.add('visible'));
+          setTerm('núcleo solar energizándose...');
+          spawnEnergy();
+        }, 5300));
+
+        const petals = petalsGroup.querySelectorAll('.petal');
+        petals.forEach((petal, i) => {
+          timeouts.push(setTimeout(() => {
+            petal.classList.remove('hidden');
+            petal.classList.add('visible');
+            if (i === 0) setTerm('pétalos floreciendo...');
+            if (i === PETAL_COUNT - 1) setTerm('floración completa alcanzada');
+          }, 5900 + i * 125));
+        });
+
+        const total = 5900 + PETAL_COUNT * 125 + 400;
+        timeouts.push(setTimeout(() => {
+          isGrowing = false;
+          isComplete = true;
+          canTrack = false;
+          growBtn.disabled = false;
+          growBtn.innerHTML = `
+            <span class="btn-icon">
+              <span class="p-stem"></span>
+              <span class="p-leaf l"></span>
+              <span class="p-leaf r"></span>
+              <span class="p-head"></span>
+            </span>
+            LIBERAR PÉTALOS
+          `;
+          message.classList.add('visible');
+          setTerm('floración completa // pulsa el botón para liberar');
+          setTimeout(hideTerm, 3000);
+        }, total));
+      }
+
+      growBtn.addEventListener('click', () => {
+        if (isComplete && !petalsReleased) releasePetalsAndSpawn();
+      });
+
+      // Boot after intro
+      createMatrix();
+      createPetals();
+      createCenterSeeds();
+      setInterval(spawnBit, 550);
+
+      // Show intro, then start
+      setTimeout(() => {
+        const intro = document.getElementById('introOverlay');
+        if (intro) intro.classList.add('hide');
+        
+        setTimeout(() => {
+          setTerm('DIANA.SYS en línea // iniciando crecimiento...');
+          setTimeout(growFlower, 900);
+        }, 900);
+      }, 2800);
+    })();
+  </script>
+</body>
+</html>

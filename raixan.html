@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
+    <title>Raixan | Mi Espacio</title>
+    <style>
+        :root {
+            --matrix: #00ff66;
+            --matrix-dim: #00aa44;
+            --bg-glass: rgba(0, 0, 0, 0.92);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+        }
+
+        body {
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100dvh;
+            font-family: 'Courier New', Courier, monospace;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 100dvh;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 30%, #0d0d10 0%, #000000 80%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        /* ============================================
+           CUADRO DE ARRIBA — LLUVIA
+           ============================================ */
+        .rain-box {
+            position: relative;
+            width: 100%;
+            flex: 0 0 auto;
+            height: clamp(170px, 28vh, 240px);
+            border: 1px solid rgba(0, 255, 102, 0.45);
+            border-radius: 14px;
+            overflow: hidden;
+            background:
+                radial-gradient(ellipse at 50% 100%, rgba(0, 255, 102, 0.05) 0%, transparent 60%),
+                linear-gradient(to bottom, #050505 0%, #000 100%);
+            box-shadow:
+                0 0 24px rgba(0, 255, 102, 0.25),
+                inset 0 0 40px rgba(0, 255, 102, 0.05);
+        }
+
+        .rain-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 25%;
+            background: linear-gradient(to bottom,
+                rgba(0, 255, 102, 0.12) 0%,
+                rgba(0, 255, 102, 0.04) 40%,
+                transparent 100%);
+            z-index: 1;
+            pointer-events: none;
+            filter: blur(8px);
+        }
+
+        .rain-box::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 22%;
+            background: linear-gradient(to top,
+                rgba(0, 255, 102, 0.08) 0%,
+                transparent 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* ============================================
+           CUADRO DE ABAJO — IDE VIVO
+           ============================================ */
+        .code-block {
+            position: relative;
+            width: 100%;
+            flex: 1 1 auto;
+            min-height: 0;
+            background: var(--bg-glass);
+            border: 1px solid var(--matrix);
+            border-radius: 14px;
+            z-index: 200;
+            box-shadow:
+                0 0 20px rgba(0, 255, 102, 0.28),
+                inset 0 0 30px rgba(0, 255, 102, 0.06);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(0, 20, 10, 0.6);
+            border-bottom: 1px solid rgba(0, 255, 102, 0.25);
+            font-size: 0.72rem;
+            color: var(--matrix-dim);
+            user-select: none;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 5;
+        }
+
+        .editor-dots { display: flex; gap: 6px; }
+        .editor-dots span {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 6px currentColor;
+        }
+        .editor-dots .dot-red    { background: #ff5f57; color: #ff5f57; }
+        .editor-dots .dot-yellow { background: #febc2e; color: #febc2e; }
+        .editor-dots .dot-green  { background: #28c840; color: #28c840; }
+
+        .editor-title {
+            flex: 1;
+            text-align: center;
+            color: rgba(0, 255, 102, 0.7);
+            letter-spacing: 0.5px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .editor-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: rgba(0, 255, 102, 0.6);
+            font-size: 0.65rem;
+        }
+        .editor-status::before {
+            content: '';
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #00ff66;
+            box-shadow: 0 0 6px #00ff66;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .editor-body {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            display: flex;
+        }
+
+        #bitCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .editor-body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.5) 0%,
+                rgba(0, 0, 0, 0.72) 50%,
+                rgba(0, 0, 0, 0.9) 100%
+            );
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .line-numbers {
+            position: relative;
+            z-index: 4;
+            padding: 14px 6px 14px 12px;
+            text-align: right;
+            color: rgba(0, 255, 102, 0.28);
+            font-size: clamp(0.6rem, 3.2vw, 0.78rem);
+            line-height: 1.55;
+            user-select: none;
+            flex-shrink: 0;
+            border-right: 1px solid rgba(0, 255, 102, 0.1);
+            min-width: 32px;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+        }
+
+        .code-area {
+            position: relative;
+            z-index: 4;
+            flex: 1;
+            min-width: 0;
+            padding: 14px 16px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--matrix) transparent;
+            -webkit-overflow-scrolling: touch;
+            font-size: clamp(0.6rem, 3.2vw, 0.78rem);
+            line-height: 1.55;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            letter-spacing: 0.2px;
+            color: var(--matrix);
+        }
+
+        .code-area::-webkit-scrollbar { width: 5px; }
+        .code-area::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 255, 102, 0.5);
+            border-radius: 3px;
+        }
+
+        .tk-comment { color: #5a7d6a; font-style: italic; }
+        .tk-keyword { color: #7dffb0; font-weight: 700; text-shadow: 0 0 6px rgba(125,255,176,0.5); }
+        .tk-string  { color: #ffe22f; text-shadow: 0 0 6px rgba(255,226,47,0.35); }
+        .tk-func    { color: #2fd4ff; text-shadow: 0 0 6px rgba(47,212,255,0.35); }
+        .tk-number  { color: #ff8a2f; }
+        .tk-punct   { color: rgba(0, 255, 102, 0.7); }
+        .tk-operator { color: #b02fff; }
+        .tk-signature {
+            color: #ff4f8a;
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(255, 79, 138, 0.5);
+        }
+        .tk-heart { color: #ff2fd4; text-shadow: 0 0 10px #ff2fd4; }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background: var(--matrix);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+            box-shadow: 0 0 10px var(--matrix), 0 0 20px rgba(0,255,102,0.5);
+            transform: translateY(-1px);
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .prompt {
+            margin-top: 10px;
+            color: rgba(0, 255, 102, 0.55);
+            font-family: 'Courier New', monospace;
+        }
+        .prompt .ps1 { color: #00ffcc; font-weight: bold; text-shadow: 0 0 6px rgba(0,255,204,0.5); }
+        .prompt .path { color: #ff8a2f; text-shadow: 0 0 6px rgba(255,138,47,0.4); }
+
+        .cmd-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 6px 12px;
+            border: 1px solid rgba(125, 255, 176, 0.5);
+            border-radius: 6px;
+            background: rgba(0, 30, 15, 0.4);
+            color: #7dffb0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 0 8px rgba(125, 255, 176, 0.15);
+            animation: cmdPulse 2.5s ease-in-out infinite;
+        }
+        .cmd-link:hover, .cmd-link:active {
+            background: rgba(0, 60, 30, 0.6);
+            border-color: #7dffb0;
+            box-shadow: 0 0 16px rgba(125, 255, 176, 0.5);
+            transform: translateY(-1px);
+        }
+        .cmd-link .arrow {
+            color: #2fd4ff;
+            font-weight: bold;
+            text-shadow: 0 0 6px #2fd4ff;
+        }
+        @keyframes cmdPulse {
+            0%, 100% { box-shadow: 0 0 8px rgba(125, 255, 176, 0.15); }
+            50%      { box-shadow: 0 0 14px rgba(125, 255, 176, 0.4); }
+        }
+
+        .drop {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            pointer-events: none;
+            will-change: transform, opacity;
+            z-index: 5;
+            top: 0; left: 0;
+            backface-visibility: hidden;
+        }
+        .drop.landed { opacity: 0.85; }
+
+        .splash {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            pointer-events: none;
+            will-change: transform, opacity;
+            z-index: 6;
+            top: 0; left: 0;
+            backface-visibility: hidden;
+        }
+
+        /* ============================================
+           PANTALLA UNIVERSO
+           ============================================ */
+        .universe-screen {
+            position: absolute;
+            inset: 0;
+            background: #000;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+            overflow: hidden;
+        }
+        .universe-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #spaceCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .universe-label {
+            position: absolute;
+            top: 20px;
+            left: 24px;
+            z-index: 5;
+            color: rgba(255, 255, 255, 0.75);
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.8s ease 0.4s;
+        }
+        .universe-screen.active .universe-label { opacity: 1; }
+        .universe-label small {
+            display: block;
+            font-size: 0.6rem;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+            text-transform: none;
+        }
+
+        .bottom-buttons {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.8s ease 0.6s;
+        }
+        .universe-screen.active .bottom-buttons { opacity: 1; }
+
+        .back-btn, .start-btn {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            user-select: none;
+            backdrop-filter: blur(6px);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .back-btn {
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(0, 0, 0, 0.5);
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .back-btn:hover, .back-btn:active {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .start-btn {
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+            animation: startPulse 2.5s ease-in-out infinite;
+        }
+        .start-btn:hover, .start-btn:active {
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 0 24px rgba(255, 255, 255, 0.5);
+            border-color: #fff;
+        }
+        @keyframes startPulse {
+            0%, 100% { box-shadow: 0 0 12px rgba(255, 255, 255, 0.2); }
+            50%      { box-shadow: 0 0 22px rgba(255, 255, 255, 0.45); }
+        }
+
+        /* ============================================
+           VENTANA DE TEXTO
+           ============================================ */
+        .story-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        .story-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .story-window {
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            max-height: 82vh;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(10, 10, 15, 0.35);
+            backdrop-filter: blur(14px) saturate(1.2);
+            -webkit-backdrop-filter: blur(14px) saturate(1.2);
+            box-shadow:
+                0 0 40px rgba(255, 255, 255, 0.06),
+                inset 0 0 30px rgba(255, 255, 255, 0.03);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.96);
+            transition: transform 0.5s ease;
+        }
+        .story-overlay.active .story-window {
+            transform: scale(1);
+        }
+
+        .story-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.55);
+            flex-shrink: 0;
+            letter-spacing: 1px;
+        }
+
+        .story-dots { display: flex; gap: 6px; }
+        .story-dots span {
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .story-title {
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.68rem;
+            text-transform: lowercase;
+            letter-spacing: 2px;
+        }
+
+        .story-close {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            flex-shrink: 0;
+            line-height: 1;
+            padding-bottom: 1px;
+        }
+        .story-close:hover, .story-close:active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .story-body {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 22px 24px 26px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.3) transparent;
+            -webkit-overflow-scrolling: touch;
+        }
+        .story-body::-webkit-scrollbar { width: 5px; }
+        .story-body::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.25);
+            border-radius: 3px;
+        }
+
+        .story-text {
+            color: rgba(255, 255, 255, 0.92);
+            font-family: 'Courier New', monospace;
+            font-size: clamp(0.78rem, 3.6vw, 0.92rem);
+            line-height: 1.7;
+            letter-spacing: 0.3px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+        }
+
+        /* ===== PÁRRAFOS CON FADE + SLIDE (rápidos) ===== */
+        .story-paragraph {
+            opacity: 0;
+            transform: translateY(12px);
+            margin-bottom: 16px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .story-paragraph.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .story-paragraph.title {
+            font-weight: 700;
+            font-size: 1.05em;
+            letter-spacing: 1px;
+            text-shadow: 0 0 14px rgba(255, 255, 255, 0.35);
+        }
+        .story-paragraph.subtitle {
+            font-style: italic;
+            opacity: 0.85;
+        }
+        .story-paragraph.signature {
+            color: #ff9fd6;
+            font-weight: 700;
+            text-shadow: 0 0 14px rgba(255, 159, 214, 0.6);
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        .follow-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 22px;
+            padding: 8px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInBtn 0.5s ease forwards;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+        }
+        .follow-btn:hover, .follow-btn:active {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 22px rgba(255, 255, 255, 0.5);
+            border-color: #fff;
+            transform: translateY(-1px);
+        }
+        @keyframes fadeInBtn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-height: 700px) {
+            .container { padding: 8px; gap: 8px; }
+            .rain-box { height: clamp(150px, 24vh, 210px); }
+            .story-body { padding: 16px 18px 20px; }
+            .story-text { font-size: clamp(0.72rem, 3.4vw, 0.85rem); }
+        }
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container { flex-direction: row; padding: 6px; gap: 6px; }
+            .rain-box { height: 100%; flex: 0 0 40%; }
+        }
+        @media (min-height: 800px) {
+            .rain-box { height: clamp(200px, 30vh, 280px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ============ CUADRO DE ARRIBA — LLUVIA ============ -->
+        <div class="rain-box" id="rainBox"></div>
+
+        <!-- ============ CUADRO DE ABAJO — IDE VIVO ============ -->
+        <div class="code-block">
+            <div class="editor-bar">
+                <div class="editor-dots">
+                    <span class="dot-red"></span>
+                    <span class="dot-yellow"></span>
+                    <span class="dot-green"></span>
+                </div>
+                <div class="editor-title">~ raixan/sobre-mi.md</div>
+                <div class="editor-status">ONLINE</div>
+            </div>
+
+            <div class="editor-body">
+                <canvas id="bitCanvas"></canvas>
+                <div class="line-numbers" id="lineNumbers">1</div>
+                <div class="code-area" id="codeArea"><span id="typedText"></span><span class="cursor" id="cursor"></span></div>
+            </div>
+        </div>
+
+        <!-- ============ PANTALLA UNIVERSO ============ -->
+        <div class="universe-screen" id="universeScreen">
+            <canvas id="spaceCanvas"></canvas>
+
+            <div class="universe-label">
+                universo
+                <small>· raixan ·</small>
+            </div>
+
+            <div class="bottom-buttons">
+                <button class="back-btn" id="backBtn">← volver</button>
+                <button class="start-btn" id="startBtn">✦ comenzar</button>
+            </div>
+
+            <div class="story-overlay" id="storyOverlay">
+                <div class="story-window">
+                    <div class="story-bar">
+                        <div class="story-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div class="story-title" id="storyTitle">mi pequeño universo</div>
+                        <button class="story-close" id="storyClose" aria-label="cerrar">×</button>
+                    </div>
+                    <div class="story-body" id="storyBody">
+                        <div class="story-text" id="storyText"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        "use strict";
+
+        // =====================================================
+        //   CONFIG GLOBAL
+        // =====================================================
+        const rainBox = document.getElementById('rainBox');
+        const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 600;
+
+        const CONFIG = {
+            gravity: isMobile ? 0.42 : 0.5,
+            maxFallSpeed: isMobile ? 9 : 11,
+            drag: 0.008,
+            spawnRate: isMobile ? 55 : 38,
+            splashCount: isMobile ? 1 : 2,
+            fadeDelay: 2200,
+            fadeDuration: 2600,
+            maxDrops: isMobile ? 70 : 130,
+            burstMin: isMobile ? 3 : 5,
+            burstMax: isMobile ? 6 : 10,
+            bitFrameSkip: isMobile ? 70 : 50,
+            bitFontSize: isMobile ? 11 : 12
+        };
+
+        // =====================================================
+        //   LLUVIA (cuadro de arriba)
+        // =====================================================
+        const NEON_COLORS = [
+            '#00ff88', '#00ffcc', '#2fd4ff', '#6a7bff', '#b02fff',
+            '#ff2fd4', '#ff4f8a', '#ff8a2f', '#ffe22f', '#7dffb0'
+        ];
+        const randomColor = () => NEON_COLORS[(Math.random() * NEON_COLORS.length) | 0];
+        const chars = 'アカサタナハマヤラワカキクケコ0123456789ABCDEF#@$%&*+=<>?';
+        const randomChar = () => chars[(Math.random() * chars.length) | 0];
+
+        const dropPool = [];
+        const activeDrops = [];
+        const splashPool = [];
+        const activeSplashes = [];
+
+        function getPooledDrop() {
+            if (dropPool.length > 0) {
+                const el = dropPool.pop();
+                el.style.display = 'block';
+                el.style.opacity = '1';
+                return el;
+            }
+            const el = document.createElement('span');
+            el.className = 'drop';
+            return el;
+        }
+        function releaseDrop(el) {
+            el.style.display = 'none';
+            if (dropPool.length < 120) dropPool.push(el);
+            else el.remove();
+        }
+        function getPooledSplash() {
+            if (splashPool.length > 0) {
+                const el = splashPool.pop();
+                el.style.display = 'block';
+                el.style.opacity = '1';
+                return el;
+            }
+            const el = document.createElement('span');
+            el.className = 'splash';
+            return el;
+        }
+        function releaseSplash(el) {
+            el.style.display = 'none';
+            if (splashPool.length < 60) splashPool.push(el);
+            else el.remove();
+        }
+
+        let cachedBoxHeight = 0;
+        let cachedBoxWidth = 0;
+        function recalcBoxSize() {
+            cachedBoxWidth = rainBox.clientWidth;
+            cachedBoxHeight = rainBox.clientHeight;
+        }
+        recalcBoxSize();
+
+        const POOL_COLS = isMobile ? 20 : 30;
+        let poolHeights = [];
+        let poolLastDrop = [];
+
+        function initPoolMap() {
+            poolHeights = new Array(POOL_COLS).fill(0);
+            poolLastDrop = new Array(POOL_COLS).fill(0);
+        }
+        initPoolMap();
+
+        function colFromX(x) {
+            const c = Math.floor((x / cachedBoxWidth) * POOL_COLS);
+            return Math.max(0, Math.min(POOL_COLS - 1, c));
+        }
+
+        function floorHeightAt(xRatio) {
+            const baseCurve = 4 + Math.exp(-Math.pow((xRatio - 0.5) * 2.6, 2)) * 8;
+            const col = Math.floor(xRatio * POOL_COLS);
+            const poolAdd = (poolHeights[col] || 0) * 2.2;
+            return baseCurve + poolAdd;
+        }
+
+        function spawnDrop() {
+            if (activeDrops.length >= CONFIG.maxDrops) return;
+            const raw = (Math.random() + Math.random()) / 2;
+            const startX = raw * cachedBoxWidth;
+            const startY = -10 - Math.random() * 20;
+            let sizeRem;
+            const r = Math.random();
+            if (r < 0.20)      sizeRem = 0.4  + Math.random() * 0.2;
+            else if (r < 0.80) sizeRem = 0.65 + Math.random() * 0.3;
+            else               sizeRem = 1.0  + Math.random() * 0.4;
+            const vy0 = 0.5 + Math.random() * 1.5 + sizeRem * 0.4;
+            const vx0 = (Math.random() - 0.5) * 0.6;
+            const color = randomColor();
+            const el = getPooledDrop();
+            el.textContent = randomChar();
+            el.style.fontSize = sizeRem + 'rem';
+            el.style.color = color;
+            el.style.textShadow = `0 0 4px ${color}, 0 0 10px ${color}, 0 0 18px ${color}80`;
+            el.classList.remove('landed');
+            el.style.transform = `translate(${startX}px, ${startY}px) scale(1,1)`;
+            el.style.transformOrigin = 'center top';
+            if (!el.parentNode) rainBox.appendChild(el);
+            activeDrops.push({
+                el, x: startX, y: startY, vy: vy0, vx: vx0, size: sizeRem, color,
+                wobblePhase: Math.random() * Math.PI * 2,
+                wobbleSpeed: 0.02 + Math.random() * 0.03,
+                landed: false, landTime: 0
+            });
+        }
+
+        function spawnSplash(x, y, color) {
+            const el = getPooledSplash();
+            el.textContent = randomChar();
+            el.style.fontSize = (0.25 + Math.random() * 0.2) + 'rem';
+            el.style.color = color;
+            el.style.textShadow = `0 0 4px ${color}, 0 0 10px ${color}80`;
+            el.style.transform = `translate(${x}px, ${y}px)`;
+            if (!el.parentNode) rainBox.appendChild(el);
+            const dir = Math.random() < 0.5 ? -1 : 1;
+            activeSplashes.push({
+                el, x, y,
+                vx: dir * (0.8 + Math.random() * 1.6),
+                vy: -(1.2 + Math.random() * 1.8),
+                life: 0,
+                maxLife: 30 + Math.random() * 20
+            });
+        }
+
+        // Pausa y loop
+        let rainPaused = false;
+        let lastSpawn = 0;
+
+        function loop(now) {
+            if (rainPaused) {
+                requestAnimationFrame(loop);
+                return;
+            }
+
+            if (now - lastSpawn > CONFIG.spawnRate) {
+                spawnDrop();
+                lastSpawn = now;
+            }
+            for (let i = activeDrops.length - 1; i >= 0; i--) {
+                const d = activeDrops[i];
+                if (d.landed) {
+                    const elapsed = now - d.landTime;
+                    if (elapsed > CONFIG.fadeDelay) {
+                        const fadeT = Math.min((elapsed - CONFIG.fadeDelay) / CONFIG.fadeDuration, 1);
+                        d.el.style.opacity = String(1 - fadeT);
+                    }
+                    if (elapsed > CONFIG.fadeDelay + CONFIG.fadeDuration) {
+                        releaseDrop(d.el);
+                        activeDrops.splice(i, 1);
+                        const col = colFromX(d.x);
+                        if (poolHeights[col] > 0) poolHeights[col] -= 0.35;
+                    }
+                    continue;
+                }
+                d.vy += CONFIG.gravity;
+                d.vy *= (1 - CONFIG.drag);
+                if (d.vy > CONFIG.maxFallSpeed) d.vy = CONFIG.maxFallSpeed;
+                d.wobblePhase += d.wobbleSpeed;
+                const wobble = Math.sin(d.wobblePhase) * 0.4;
+                d.y += d.vy;
+                d.x += d.vx + wobble;
+                const stretch = 1 + Math.min(d.vy / 10, 0.6);
+                const scaleX = 1 / Math.sqrt(stretch);
+                d.el.style.transform = `translate(${d.x}px, ${d.y}px) scale(${scaleX}, ${stretch})`;
+                const xRatio = Math.min(1, Math.max(0, d.x / cachedBoxWidth));
+                const floorY = cachedBoxHeight - floorHeightAt(xRatio);
+                if (d.y >= floorY) {
+                    d.y = floorY;
+                    d.el.style.transform = `translate(${d.x}px, ${d.y}px) scale(1,1)`;
+                    d.el.classList.add('landed');
+                    d.landed = true;
+                    d.landTime = now;
+                    const col = colFromX(d.x);
+                    poolHeights[col] += 0.6;
+                    poolLastDrop[col] = now;
+                    for (let s = 0; s < CONFIG.splashCount; s++) spawnSplash(d.x, d.y, d.color);
+                }
+            }
+            for (let i = activeSplashes.length - 1; i >= 0; i--) {
+                const s = activeSplashes[i];
+                s.vy += CONFIG.gravity * 0.85;
+                s.x += s.vx; s.y += s.vy; s.life++;
+                s.el.style.transform = `translate(${s.x}px, ${s.y}px)`;
+                const lifeRatio = s.life / s.maxLife;
+                s.el.style.opacity = String(Math.max(0, 1 - lifeRatio));
+                const xRatio = Math.min(1, Math.max(0, s.x / cachedBoxWidth));
+                const floorY = cachedBoxHeight - floorHeightAt(xRatio);
+                if ((s.y >= floorY && s.vy > 0) || s.life > s.maxLife) {
+                    releaseSplash(s.el);
+                    activeSplashes.splice(i, 1);
+                }
+            }
+            for (let c = 0; c < POOL_COLS; c++) {
+                if (poolHeights[c] > 0 && now - poolLastDrop[c] > 3000) {
+                    poolHeights[c] -= 0.02;
+                    if (poolHeights[c] < 0) poolHeights[c] = 0;
+                }
+            }
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+
+        // Ráfagas
+        setInterval(() => {
+            if (rainPaused) return;
+            const burst = CONFIG.burstMin + Math.floor(Math.random() * (CONFIG.burstMax - CONFIG.burstMin + 1));
+            for (let i = 0; i < burst; i++) setTimeout(() => { if (!rainPaused) spawnDrop(); }, i * 25);
+        }, 2400);
+
+        // Limpieza total
+        function clearRain() {
+            for (let i = activeDrops.length - 1; i >= 0; i--) {
+                releaseDrop(activeDrops[i].el);
+            }
+            activeDrops.length = 0;
+            for (let i = activeSplashes.length - 1; i >= 0; i--) {
+                releaseSplash(activeSplashes[i].el);
+            }
+            activeSplashes.length = 0;
+            initPoolMap();
+        }
+
+        // =====================================================
+        //   BITS
+        // =====================================================
+        const bitCanvas = document.getElementById('bitCanvas');
+        const bitCtx = bitCanvas.getContext('2d');
+        const editorBody = document.querySelector('.editor-body');
+        const bitChars = '01';
+        const bitFontSize = CONFIG.bitFontSize;
+        let bitColumns = 0;
+        let bitDrops = [];
+        let bitDpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        function resizeBitCanvas() {
+            const w = editorBody.clientWidth;
+            const h = editorBody.clientHeight;
+            if (w === 0 || h === 0) return;
+            bitCanvas.width = w * bitDpr;
+            bitCanvas.height = h * bitDpr;
+            bitCanvas.style.width = w + 'px';
+            bitCanvas.style.height = h + 'px';
+            bitCtx.setTransform(bitDpr, 0, 0, bitDpr, 0, 0);
+            bitColumns = Math.floor(w / bitFontSize);
+            bitDrops = new Array(bitColumns).fill(0).map(() =>
+                Math.floor(Math.random() * (h / bitFontSize))
+            );
+        }
+
+        function drawBits() {
+            const w = editorBody.clientWidth;
+            const h = editorBody.clientHeight;
+            if (w === 0 || h === 0) return;
+            bitCtx.fillStyle = 'rgba(0, 0, 0, 0.09)';
+            bitCtx.fillRect(0, 0, w, h);
+            bitCtx.font = bitFontSize + 'px "Courier New", monospace';
+            bitCtx.textBaseline = 'top';
+            for (let i = 0; i < bitDrops.length; i++) {
+                const text = bitChars[(Math.random() * 2) | 0];
+                const x = i * bitFontSize;
+                const y = bitDrops[i] * bitFontSize;
+                if (Math.random() > 0.975) {
+                    bitCtx.fillStyle = '#d8ffe8';
+                    bitCtx.shadowColor = '#00ff66';
+                    bitCtx.shadowBlur = 12;
+                } else {
+                    const g = 150 + ((Math.random() * 105) | 0);
+                    bitCtx.fillStyle = `rgb(0,${g},${(g * 0.35) | 0})`;
+                    bitCtx.shadowColor = '#00ff66';
+                    bitCtx.shadowBlur = 5;
+                }
+                bitCtx.fillText(text, x, y);
+                if (y > h && Math.random() > 0.975) bitDrops[i] = 0;
+                bitDrops[i]++;
+            }
+            bitCtx.shadowBlur = 0;
+        }
+
+        let bitLast = 0;
+        function bitLoop(t) {
+            if (t - bitLast > CONFIG.bitFrameSkip) {
+                drawBits();
+                bitLast = t;
+            }
+            requestAnimationFrame(bitLoop);
+        }
+
+        // =====================================================
+        //   TIPEO CONSOLA
+        // =====================================================
+        const CODE_FRAGMENTS = [
+            { t: 'comment',   s: '// ==========================================\n' },
+            { t: 'comment',   s: '//            ' },
+            { t: 'signature', s: 'Este espacio soy yo' },
+            { t: 'comment',   s: '\n// ==========================================\n' },
+            { t: 'comment',   s: '//\n' },
+            { t: 'comment',   s: '// ' },
+            { t: 'text',      s: 'Esto no es solo código.\n' },
+            { t: 'comment',   s: '// ' },
+            { t: 'text',      s: 'Es mi sello.\n' },
+            { t: 'comment',   s: '//\n' },
+            { t: 'comment',   s: '// ' },
+            { t: 'keyword',   s: 'const' },
+            { t: 'text',      s: ' canvas ' },
+            { t: 'operator',  s: '=' },
+            { t: 'text',      s: ' ' },
+            { t: 'string',    s: '"negro"' },
+            { t: 'punct',     s: ';' },
+            { t: 'text',      s: '\n' },
+            { t: 'comment',   s: '// donde me dejo ser sin pedir permiso.\n' },
+            { t: 'comment',   s: '//\n' },
+            { t: 'comment',   s: '// ------------------------------------------\n' },
+            { t: 'comment',   s: '//\n' },
+            { t: 'keyword',   s: 'function' },
+            { t: 'text',      s: ' ' },
+            { t: 'func',      s: 'miEstilo' },
+            { t: 'punct',     s: '() {' },
+            { t: 'text',      s: '\n  ' },
+            { t: 'keyword',   s: 'return' },
+            { t: 'text',      s: ' {\n    ' },
+            { t: 'string',    s: '"oscuro"' },
+            { t: 'punct',     s: ':' },
+            { t: 'text',      s: ' ' },
+            { t: 'string',    s: '"porque ahí se ve la luz"' },
+            { t: 'punct',     s: ',' },
+            { t: 'text',      s: '\n    ' },
+            { t: 'string',    s: '"neón"' },
+            { t: 'punct',     s: ':' },
+            { t: 'text',      s: ' ' },
+            { t: 'string',    s: '"no sé hacer las cosas a medias"' },
+            { t: 'punct',     s: ',' },
+            { t: 'text',      s: '\n    ' },
+            { t: 'string',    s: '"colorido"' },
+            { t: 'punct',     s: ':' },
+            { t: 'text',      s: ' ' },
+            { t: 'string',    s: '"siento todo con intensidad"' },
+            { t: 'text',      s: '\n  ' },
+            { t: 'punct',     s: '};' },
+            { t: 'text',      s: '\n' },
+            { t: 'punct',     s: '}' },
+            { t: 'text',      s: '\n\n' },
+            { t: 'comment',   s: '// así programo, así pienso, así soy\n' },
+            { t: 'keyword',   s: 'let' },
+            { t: 'text',      s: ' ' },
+            { t: 'func',      s: 'yo' },
+            { t: 'text',      s: ' ' },
+            { t: 'operator',  s: '=' },
+            { t: 'text',      s: ' ' },
+            { t: 'number',    s: '100' },
+            { t: 'operator',  s: '%' },
+            { t: 'text',      s: ' ' },
+            { t: 'string',    s: '"auténtica"' },
+            { t: 'punct',     s: ';' },
+            { t: 'text',      s: '\n\n' },
+            { t: 'comment',   s: '// cada línea que escribo\n' },
+            { t: 'comment',   s: '// lleva un poquito de mí\n' },
+            { t: 'comment',   s: '//\n' },
+            { t: 'comment',   s: '// Bienvenida a mi forma de ver el mundo.\n\n' },
+            { t: 'signature', s: '//                    ~ Fantasmita ' },
+            { t: 'heart',     s: '♡' }
+        ];
+
+        const codeArea = document.getElementById('codeArea');
+        const lineNumbers = document.getElementById('lineNumbers');
+        const cursor = document.getElementById('cursor');
+
+        const FLAT = [];
+        CODE_FRAGMENTS.forEach(f => {
+            for (let i = 0; i < f.s.length; i++) {
+                FLAT.push({ ch: f.s[i], type: f.t });
+            }
+        });
+
+        let currentSpan = null;
+        let currentType = null;
+
+        function appendChar(ch, type) {
+            if (type === 'text') {
+                if (currentSpan) currentSpan = null;
+                currentType = null;
+                codeArea.insertBefore(document.createTextNode(ch), cursor);
+                return;
+            }
+            if (type !== currentType || !currentSpan) {
+                currentSpan = null;
+                const span = document.createElement('span');
+                span.className = 'tk-' + type;
+                currentSpan = span;
+                currentType = type;
+                codeArea.insertBefore(span, cursor);
+            }
+            currentSpan.textContent += ch;
+        }
+
+        function updateLineNumbers() {
+            const text = codeArea.textContent;
+            const totalLines = (text.match(/\n/g) || []).length + 1;
+            let out = '';
+            for (let i = 1; i <= totalLines; i++) out += i + '\n';
+            lineNumbers.textContent = out;
+        }
+
+        function autoScroll() { codeArea.scrollTop = codeArea.scrollHeight; }
+
+        let idx = 0;
+        const BASE_SPEED = isMobile ? 32 : 22;
+
+        function typeNext() {
+            if (idx >= FLAT.length) {
+                appendPrompt();
+                return;
+            }
+            const item = FLAT[idx];
+            appendChar(item.ch, item.type);
+            idx++;
+            let delay = BASE_SPEED;
+            if (item.ch === '\n') delay = BASE_SPEED * 4;
+            else if (item.ch === '.' || item.ch === ',') delay = BASE_SPEED * 3;
+            else if (item.ch === ' ') delay = BASE_SPEED * 0.7;
+            else if (Math.random() < 0.05) delay = BASE_SPEED * 2.5;
+            if (item.ch === '\n') updateLineNumbers();
+            autoScroll();
+            setTimeout(typeNext, delay);
+        }
+
+        function appendPrompt() {
+            const prompt = document.createElement('div');
+            prompt.className = 'prompt';
+            prompt.innerHTML = '<span class="ps1">raixan@matrix</span>:<span class="path">~/sobre-mi</span>$ <span class="cursor"></span>';
+            codeArea.appendChild(prompt);
+
+            const cmd = document.createElement('div');
+            cmd.className = 'cmd-link';
+            cmd.innerHTML = '<span class="arrow">▸</span> abrir universo ✦';
+            cmd.addEventListener('click', openUniverse);
+            cmd.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                openUniverse();
+            }, { passive: false });
+            codeArea.appendChild(cmd);
+
+            cursor.style.display = 'none';
+            autoScroll();
+        }
+
+        setTimeout(() => {
+            updateLineNumbers();
+            typeNext();
+        }, 800);
+
+        // =====================================================
+        //   UNIVERSO
+        // =====================================================
+        const universeScreen = document.getElementById('universeScreen');
+        const spaceCanvas = document.getElementById('spaceCanvas');
+        const spaceCtx = spaceCanvas.getContext('2d');
+        const backBtn = document.getElementById('backBtn');
+        const startBtn = document.getElementById('startBtn');
+
+        let spaceW = 0, spaceH = 0;
+        let spaceDpr = Math.min(window.devicePixelRatio || 1, 2);
+        let stars = [];
+        let constellations = [];
+        let shootingStars = [];
+        let spaceRunning = false;
+        let nebulaCanvas = null;
+
+        function mulberry32(seed) {
+            return function() {
+                seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+                let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+                t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            };
+        }
+
+        function resizeSpaceCanvas() {
+            spaceW = universeScreen.clientWidth;
+            spaceH = universeScreen.clientHeight;
+            if (spaceW === 0 || spaceH === 0) return;
+            spaceCanvas.width = spaceW * spaceDpr;
+            spaceCanvas.height = spaceH * spaceDpr;
+            spaceCanvas.style.width = spaceW + 'px';
+            spaceCanvas.style.height = spaceH + 'px';
+            spaceCtx.setTransform(spaceDpr, 0, 0, spaceDpr, 0, 0);
+            generateStars();
+            generateConstellations();
+            buildNebula();
+        }
+
+        function generateStars() {
+            const count = Math.floor((spaceW * spaceH) / 3500);
+            const rand = mulberry32(1337);
+            stars = [];
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: rand() * spaceW,
+                    y: rand() * spaceH,
+                    r: 0.3 + rand() * 1.4,
+                    baseA: 0.3 + rand() * 0.7,
+                    twinkleSpeed: 0.5 + rand() * 1.5,
+                    twinklePhase: rand() * Math.PI * 2,
+                    big: rand() > 0.93
+                });
+            }
+        }
+
+        function generateConstellations() {
+            const rand = mulberry32(2026);
+            constellations = [];
+            const numConstel = Math.max(3, Math.floor((spaceW * spaceH) / 120000));
+            for (let c = 0; c < numConstel; c++) {
+                const cx = 60 + rand() * (spaceW - 120);
+                const cy = 60 + rand() * (spaceH - 120);
+                const pointsCount = 4 + Math.floor(rand() * 4);
+                const points = [];
+                for (let p = 0; p < pointsCount; p++) {
+                    const angle = (p / pointsCount) * Math.PI * 2 + rand() * 0.7;
+                    const dist = 30 + rand() * 70;
+                    points.push({
+                        x: cx + Math.cos(angle) * dist,
+                        y: cy + Math.sin(angle) * dist,
+                        r: 0.8 + rand() * 1.2
+                    });
+                }
+                constellations.push({ points, phase: rand() * Math.PI * 2 });
+            }
+        }
+
+        function buildNebula() {
+            nebulaCanvas = document.createElement('canvas');
+            nebulaCanvas.width = spaceW;
+            nebulaCanvas.height = spaceH;
+            const ctx = nebulaCanvas.getContext('2d');
+            const rand = mulberry32(42);
+            const centerX = spaceW / 2;
+            const centerY = spaceH / 2;
+            const angle = Math.PI * 0.32;
+            const cosA = Math.cos(angle);
+            const sinA = Math.sin(angle);
+
+            const particleCount = Math.floor((spaceW * spaceH) / 260);
+            for (let i = 0; i < particleCount; i++) {
+                const along = (rand() - 0.5) * 1.6 * Math.max(spaceW, spaceH);
+                const g1 = (rand() + rand() + rand() - 1.5) / 1.5;
+                const perp = g1 * (30 + rand() * 60);
+                const px = centerX + along * cosA - perp * sinA;
+                const py = centerY + along * sinA + perp * cosA;
+                if (px < -50 || px > spaceW + 50 || py < -50 || py > spaceH + 50) continue;
+                const distFromCenter = Math.abs(perp);
+                const alpha = Math.max(0, (1 - distFromCenter / 140)) * (0.05 + rand() * 0.15);
+                const size = 0.5 + rand() * 1.8;
+                ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+                ctx.beginPath();
+                ctx.arc(px, py, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            for (let i = 0; i < 400; i++) {
+                const along = (rand() - 0.5) * 0.6 * Math.max(spaceW, spaceH);
+                const g1 = (rand() + rand() - 1) / 1;
+                const perp = g1 * 25;
+                const px = centerX + along * cosA - perp * sinA;
+                const py = centerY + along * sinA + perp * cosA;
+                const alpha = 0.15 + rand() * 0.35;
+                const size = 1 + rand() * 2.5;
+                ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+                ctx.beginPath();
+                ctx.arc(px, py, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        let spaceStart = 0;
+
+        function drawSpace(now) {
+            if (!spaceRunning) return;
+            const t = (now - spaceStart) / 1000;
+            spaceCtx.fillStyle = '#000';
+            spaceCtx.fillRect(0, 0, spaceW, spaceH);
+
+            spaceCtx.globalAlpha = 0.85 + Math.sin(t * 0.3) * 0.05;
+            spaceCtx.drawImage(nebulaCanvas, 0, 0);
+            spaceCtx.globalAlpha = 1;
+
+            for (const c of constellations) {
+                spaceCtx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+                spaceCtx.lineWidth = 0.6;
+                spaceCtx.beginPath();
+                for (let i = 0; i < c.points.length; i++) {
+                    const p = c.points[i];
+                    if (i === 0) spaceCtx.moveTo(p.x, p.y);
+                    else spaceCtx.lineTo(p.x, p.y);
+                }
+                if (c.points.length > 3) {
+                    spaceCtx.lineTo(c.points[0].x, c.points[0].y);
+                }
+                spaceCtx.stroke();
+
+                for (const p of c.points) {
+                    const pulse = 0.7 + Math.sin(t * 1.2 + c.phase + p.x * 0.01) * 0.3;
+                    const grad = spaceCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 6);
+                    grad.addColorStop(0, `rgba(255,255,255,${0.5 * pulse})`);
+                    grad.addColorStop(1, 'rgba(255,255,255,0)');
+                    spaceCtx.fillStyle = grad;
+                    spaceCtx.beginPath();
+                    spaceCtx.arc(p.x, p.y, p.r * 6, 0, Math.PI * 2);
+                    spaceCtx.fill();
+                    spaceCtx.fillStyle = `rgba(255,255,255,${pulse})`;
+                    spaceCtx.beginPath();
+                    spaceCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    spaceCtx.fill();
+                }
+            }
+
+            for (const s of stars) {
+                const twinkle = 0.6 + Math.sin(t * s.twinkleSpeed + s.twinklePhase) * 0.4;
+                const alpha = s.baseA * twinkle;
+                if (s.big) {
+                    const grad = spaceCtx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 8);
+                    grad.addColorStop(0, `rgba(255,255,255,${alpha * 0.4})`);
+                    grad.addColorStop(1, 'rgba(255,255,255,0)');
+                    spaceCtx.fillStyle = grad;
+                    spaceCtx.beginPath();
+                    spaceCtx.arc(s.x, s.y, s.r * 8, 0, Math.PI * 2);
+                    spaceCtx.fill();
+                }
+                spaceCtx.fillStyle = `rgba(255,255,255,${alpha})`;
+                spaceCtx.beginPath();
+                spaceCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                spaceCtx.fill();
+            }
+
+            if (Math.random() < 0.008) {
+                const startX = Math.random() * spaceW;
+                const startY = Math.random() * spaceH * 0.5;
+                const angle = Math.PI * 0.25 + Math.random() * 0.3;
+                const speed = 6 + Math.random() * 6;
+                shootingStars.push({
+                    x: startX, y: startY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 0,
+                    maxLife: 60 + Math.random() * 40
+                });
+            }
+
+            for (let i = shootingStars.length - 1; i >= 0; i--) {
+                const ss = shootingStars[i];
+                ss.x += ss.vx;
+                ss.y += ss.vy;
+                ss.life++;
+                const lifeRatio = ss.life / ss.maxLife;
+                const alpha = Math.max(0, 1 - lifeRatio);
+                const tailX = ss.x - ss.vx * 8;
+                const tailY = ss.y - ss.vy * 8;
+                const grad = spaceCtx.createLinearGradient(tailX, tailY, ss.x, ss.y);
+                grad.addColorStop(0, 'rgba(255,255,255,0)');
+                grad.addColorStop(1, `rgba(255,255,255,${alpha})`);
+                spaceCtx.strokeStyle = grad;
+                spaceCtx.lineWidth = 1.5;
+                spaceCtx.beginPath();
+                spaceCtx.moveTo(tailX, tailY);
+                spaceCtx.lineTo(ss.x, ss.y);
+                spaceCtx.stroke();
+                spaceCtx.fillStyle = `rgba(255,255,255,${alpha})`;
+                spaceCtx.beginPath();
+                spaceCtx.arc(ss.x, ss.y, 1.5, 0, Math.PI * 2);
+                spaceCtx.fill();
+                if (ss.life > ss.maxLife || ss.x > spaceW + 100 || ss.y > spaceH + 100) {
+                    shootingStars.splice(i, 1);
+                }
+            }
+            requestAnimationFrame(drawSpace);
+        }
+
+        function openUniverse() {
+            // Pausar la lluvia para que no se acumule mientras estás en el universo
+            rainPaused = true;
+            universeScreen.classList.add('active');
+            if (!spaceRunning) {
+                resizeSpaceCanvas();
+                spaceRunning = true;
+                spaceStart = performance.now();
+                requestAnimationFrame(drawSpace);
+            }
+        }
+
+        function closeUniverse() {
+            closeStory();
+            universeScreen.classList.remove('active');
+            setTimeout(() => {
+                if (!universeScreen.classList.contains('active')) {
+                    spaceRunning = false;
+                    // Al volver, limpiamos todo y reactivamos la lluvia limpia
+                    clearRain();
+                    lastSpawn = performance.now();
+                    rainPaused = false;
+                }
+            }, 900);
+        }
+
+        // "volver" regresa al index principal, directo al contenido (después del botón abrir)
+        function volverAlInicio() { window.location.href = 'index.html#carta'; }
+        backBtn.addEventListener('click', volverAlInicio);
+        backBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            volverAlInicio();
+        }, { passive: false });
+
+        // =====================================================
+        //   HISTORIA — OP A rápida
+        // =====================================================
+        const storyOverlay = document.getElementById('storyOverlay');
+        const storyBody = document.getElementById('storyBody');
+        const storyText = document.getElementById('storyText');
+        const storyTitle = document.getElementById('storyTitle');
+        const storyClose = document.getElementById('storyClose');
+
+        // ===================================================
+        //   PARTE 1
+        // ===================================================
+        const STORY_PART_1 = [
+            { type: 'title', text: 'Mi pequeño universo' },
+            { type: 'subtitle', text: 'Una forma de existir entre las estrellas.' },
+            { type: 'normal', text: 'Este universo soy yo.' },
+            { type: 'normal', text: 'No soy una estrella que siempre sabe hacia dónde brillar, ni una constelación que nació con todas sus piezas en su lugar.' },
+            { type: 'normal', text: 'Soy un poco de polvo cósmico: ideas que chocan, sueños que se niegan a apagarse y preguntas que todavía no sé responder.' },
+            { type: 'normal', text: 'Oscuro\n\nPorque aprendí que no toda oscuridad significa estar perdido. A veces es el espacio que necesito para encontrar mi propia luz.' },
+            { type: 'normal', text: 'En expansión\n\nPorque no quiero ser siempre la misma versión de mí. Quiero descubrir, construir, equivocarme y volver a intentarlo.' },
+            { type: 'normal', text: 'Inacabado\n\nPorque todavía hay galaxias en mí que ni siquiera conozco. Y aunque a veces el camino parezca infinito, no quiero confundir la distancia con lo imposible.' },
+            { type: 'normal', text: 'Al fin y al cabo, el universo no se hizo pequeño para que pudiéramos comprenderlo. Fuimos nosotros quienes aprendimos a mirar más allá.' },
+            { type: 'normal', text: 'Y si algo he aprendido de las estrellas es que no necesito conocer todo el camino para dar el siguiente paso. Me basta con tener algo que me haga querer descubrir qué hay un poco más allá.' },
+            { type: 'normal', text: 'Quizá nunca llegue a conocer todos los misterios del cosmos, pero no quisiera pasar la vida sin haber intentado descubrirlos.' },
+            { type: 'normal', text: 'Así pienso. Así sueño. Así sigo.' },
+            { type: 'normal', text: 'Y si alguna vez te preguntas por qué construyo universos en una pantalla, quizá sea porque todavía creo que hay cosas que valen la pena incluso antes de saber hasta dónde nos llevarán.' },
+            { type: 'normal', text: 'Bienvenida a mi universo.' }
+        ];
+
+        // ===================================================
+        //   PARTE 2
+        // ===================================================
+        const STORY_PART_2 = [
+            { type: 'title', text: 'Dos fuerzas, un mismo universo' },
+            { type: 'subtitle', text: 'Sobre la gravedad de sentir y la belleza de saber permanecer.' },
+            { type: 'normal', text: 'Hay dos fuerzas habitando este universo.' },
+            { type: 'normal', text: 'Una mira hacia las estrellas.' },
+            { type: 'normal', text: 'Hay una luz que no sé explicar, una presencia capaz de volver extraordinario hasta el rincón más ordinario del cosmos.' },
+            { type: 'normal', text: 'Si el universo tuviera una forma de recordarme que aún existen cosas maravillosas, tendría algo de su luz.' },
+            { type: 'normal', text: 'Y a veces, cuando la contemplo, una parte de mí quisiera desafiar la gravedad, cruzar distancias imposibles y encontrar un lugar entre sus constelaciones.' },
+            { type: 'normal', text: 'Pero no todos los cuerpos celestes nacieron para compartir la misma órbita, y ninguna estrella necesita que alguien altere su cielo para ser admirada.' },
+            { type: 'normal', text: 'La otra conoce el silencio del espacio.' },
+            { type: 'normal', text: 'Sabe que hay estrellas demasiado hermosas para convertirlas en una promesa que todavía no podría cumplir.' },
+            { type: 'normal', text: 'Sabe que no basta con sentir una gravedad inmensa para saber construir un hogar a su alrededor.' },
+            { type: 'normal', text: 'Sabe también que dentro de mí aún hay galaxias por descubrir, partes de mi universo que siguen en formación y caminos que todavía estoy aprendiendo a recorrer.' },
+            { type: 'normal', text: 'Por eso, a veces, elige la distancia.' },
+            { type: 'normal', text: 'No porque la luz haya perdido su belleza, sino porque su belleza nunca fue el problema.' },
+            { type: 'normal', text: 'Y entre ambas, permanezco yo.' },
+            { type: 'normal', text: 'Con una parte que sueña con acercarse y otra que aprende a no confundir el deseo con el derecho a ocupar un lugar.' },
+            { type: 'normal', text: 'Una que quisiera ser un universo entero para alguien que le parece extraordinaria.' },
+            { type: 'normal', text: 'Y otra que comprende que una estrella puede recibir cariño sin que nadie le pida cambiar su trayectoria.' },
+            { type: 'normal', text: 'Quizá mi forma más sincera de querer no sea lograr que nuestras órbitas coincidan, sino cuidar la luz que hizo que quisiera mirar al cielo en primer lugar.' },
+            { type: 'normal', text: 'Porque hay sentimientos que no necesitan convertirse en una historia de amor para ser de las cosas más bonitas que nos han pasado.' },
+            { type: 'normal', text: 'Algunas luces no se quedan en nuestra órbita. Pero eso no significa que se vayan.' },
+            { type: 'normal', text: 'Algunas llegan para enseñarnos que todavía somos capaces de admirar, de sentir una ternura que creíamos desconocida y de encontrar belleza incluso en lo incierto.' },
+            { type: 'normal', text: 'Y si algún día el universo me pregunta qué es lo más hermoso que he encontrado mientras intentaba comprenderlo, quizá no hable de galaxias, ni de nebulosas, ni de estrellas que llevan millones de años brillando.' },
+            { type: 'normal', text: 'Hablaré de una luz que, sin proponérselo, hizo que mi universo se viera más bonito.' },
+            { type: 'normal', text: 'Y eso, incluso sin saber qué nombre darle, ya significa muchísimo para mí.' },
+            { type: 'normal', text: 'Y por si acaso no quedó claro: esto no es una despedida.' },
+            { type: 'normal', text: 'La distancia no es una puerta cerrada.' },
+            { type: 'normal', text: 'Mi puerta está abierta, y va a seguir así.' },
+            { type: 'normal', text: 'Para cuando quieras hablar, reírte de algo absurdo, quejarte del mundo o solo avisar que estás bien. Para las pipicas, para el cuchalllo y para todo lo que venga.' },
+            { type: 'normal', text: 'Pase lo que pase con nuestras órbitas, aquí hay alguien que se alegra de que existas.' },
+            { type: 'normal', text: 'Mi puerta siempre va a estar abierta para ti.' },
+            { type: 'signature', text: 'Tu Fantasmita ♡' }
+        ];
+
+        const STORY_PARTS = [STORY_PART_1, STORY_PART_2];
+
+        let storyPartIndex = 0;
+        let storyParagraphIndex = 0;
+        let storyTimers = [];
+        let userScrolledAway = false;
+
+        storyBody.addEventListener('scroll', () => {
+            const atBottom = storyBody.scrollHeight - storyBody.scrollTop - storyBody.clientHeight < 40;
+            userScrolledAway = !atBottom;
+        });
+
+        function clearStoryTimers() {
+            storyTimers.forEach(clearTimeout);
+            storyTimers = [];
+        }
+
+        function clearStory() {
+            clearStoryTimers();
+            storyText.innerHTML = '';
+            const oldBtn = storyBody.querySelector('.follow-btn');
+            if (oldBtn) oldBtn.remove();
+            storyBody.scrollTop = 0;
+        }
+
+        function createParagraph(par) {
+            const el = document.createElement('div');
+            el.className = 'story-paragraph';
+            if (par.type === 'title') el.classList.add('title');
+            if (par.type === 'subtitle') el.classList.add('subtitle');
+            if (par.type === 'signature') el.classList.add('signature');
+            el.textContent = par.text;
+            return el;
+        }
+
+        function showNextParagraph() {
+            const parts = STORY_PARTS[storyPartIndex];
+            if (storyParagraphIndex >= parts.length) {
+                showFollowButton();
+                return;
+            }
+
+            const par = parts[storyParagraphIndex];
+            const el = createParagraph(par);
+            storyText.appendChild(el);
+
+            void el.offsetWidth;
+            el.classList.add('show');
+
+            if (!userScrolledAway) {
+                storyBody.scrollTop = storyBody.scrollHeight;
+            }
+
+            storyParagraphIndex++;
+
+            // ===== VELOCIDAD AUMENTADA =====
+            const baseDelay = isMobile ? 380 : 320;
+            const lengthExtra = Math.min(par.text.length * 3, 350);
+            const delay = baseDelay + lengthExtra;
+
+            storyTimers.push(setTimeout(showNextParagraph, delay));
+        }
+
+        function showFollowButton() {
+            if (storyPartIndex + 1 < STORY_PARTS.length) {
+                const btn = document.createElement('div');
+                btn.className = 'follow-btn';
+                btn.innerHTML = 'seguir →';
+                btn.addEventListener('click', goToNextPart);
+                btn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    goToNextPart();
+                }, { passive: false });
+                storyBody.appendChild(btn);
+                if (!userScrolledAway) {
+                    storyBody.scrollTop = storyBody.scrollHeight;
+                }
+            } else {
+                const btn = document.createElement('div');
+                btn.className = 'follow-btn';
+                btn.innerHTML = 'fin ✦';
+                btn.addEventListener('click', closeStory);
+                btn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    closeStory();
+                }, { passive: false });
+                storyBody.appendChild(btn);
+                if (!userScrolledAway) {
+                    storyBody.scrollTop = storyBody.scrollHeight;
+                }
+            }
+        }
+
+        function goToNextPart() {
+            const oldBtn = storyBody.querySelector('.follow-btn');
+            if (oldBtn) oldBtn.remove();
+
+            clearStoryTimers();
+            storyText.innerHTML = '';
+            storyBody.scrollTop = 0;
+            userScrolledAway = false;
+
+            storyPartIndex++;
+            storyParagraphIndex = 0;
+
+            if (storyPartIndex === 0) storyTitle.textContent = 'mi pequeño universo';
+            else if (storyPartIndex === 1) storyTitle.textContent = 'dos fuerzas · ii';
+
+            storyTimers.push(setTimeout(showNextParagraph, 300));
+        }
+
+        function openStory() {
+            storyOverlay.classList.add('active');
+            storyPartIndex = 0;
+            storyParagraphIndex = 0;
+            storyTitle.textContent = 'mi pequeño universo';
+            userScrolledAway = false;
+            clearStory();
+            storyTimers.push(setTimeout(showNextParagraph, 300));
+        }
+
+        function closeStory() {
+            storyOverlay.classList.remove('active');
+            clearStoryTimers();
+        }
+
+        startBtn.addEventListener('click', openStory);
+        startBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            openStory();
+        }, { passive: false });
+
+        storyClose.addEventListener('click', closeStory);
+        storyClose.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            closeStory();
+        }, { passive: false });
+
+        // =====================================================
+        //   RESIZE
+        // =====================================================
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                resizeBitCanvas();
+                recalcBoxSize();
+                initPoolMap();
+                if (universeScreen.classList.contains('active')) {
+                    resizeSpaceCanvas();
+                }
+            }, 150);
+        });
+
+        // =====================================================
+        //   INICIALIZACIÓN
+        // =====================================================
+        resizeBitCanvas();
+        requestAnimationFrame(bitLoop);
+    })();
+    </script>
+</body>
+</html>
